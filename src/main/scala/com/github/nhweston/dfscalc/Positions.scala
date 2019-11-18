@@ -1,4 +1,4 @@
-package org.bitbucket.nhweston.dfscalc
+package com.github.nhweston.dfscalc
 
 import com.github.tototoshi.csv.CSVReader
 

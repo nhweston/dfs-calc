@@ -1,8 +1,8 @@
-package org.bitbucket.nhweston.dfscalc
+package com.github.nhweston.dfscalc
 
 import com.github.tototoshi.csv.CSVReader
-import org.bitbucket.nhweston.mcknapsack.Category.ElemCategory
-import org.bitbucket.nhweston.mcknapsack.Selectable.Element
+import com.github.nhweston.mcknapsack.Category.ElemCategory
+import com.github.nhweston.mcknapsack.Selectable.Element
 
 object Selectables {
 

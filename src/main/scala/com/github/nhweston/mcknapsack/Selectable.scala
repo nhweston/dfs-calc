@@ -1,4 +1,4 @@
-package org.bitbucket.nhweston.mcknapsack
+package com.github.nhweston.mcknapsack
 
 sealed abstract class Selectable {
     val labels: Seq[String]

@@ -1,6 +1,6 @@
-package org.bitbucket.nhweston.mcknapsack
+package com.github.nhweston.mcknapsack
 
-import org.bitbucket.nhweston.mcknapsack.Selectable.Combination
+import Selectable.Combination
 
 sealed abstract class Category (val selectables: Seq[Selectable], val numToSelect: Int) {
 

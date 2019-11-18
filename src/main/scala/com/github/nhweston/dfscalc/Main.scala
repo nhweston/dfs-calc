@@ -1,8 +1,9 @@
-package org.bitbucket.nhweston.dfscalc
+package com.github.nhweston.dfscalc
 
 import java.time.{Duration, Instant}
 
-import org.bitbucket.nhweston.mcknapsack.Knapsack
+import com.github.nhweston.mcknapsack
+import com.github.nhweston.mcknapsack.Knapsack
 
 object Main {
 
@@ -30,7 +31,7 @@ object Main {
                 val positions = Positions fromFile positionsPath
                 val categories = Selectables fromFile (selectablesPath, positions)
                 val budget = BigDecimal (budgetStr)
-                run (Knapsack (categories, budget))
+                run (mcknapsack.Knapsack (categories, budget))
             case args => throw new MatchError (args)
         }
     }
