@@ -4,8 +4,11 @@ import java.time.{Duration, Instant}
 
 import com.github.nhweston.mcknapsack
 import com.github.nhweston.mcknapsack.Knapsack
+import com.github.tototoshi.csv.CSVWriter
 
 object Main {
+
+    val PATH: String = "./data/"
 
     def run (knapsack: Knapsack) : Unit = {
         val t0 = Instant.now
@@ -28,8 +31,10 @@ object Main {
     def main (args: Array[String]) : Unit = {
         args.toSeq match {
             case positionsPath +: selectablesPath +: budgetStr +: Nil =>
-                val positions = Positions fromFile positionsPath
-                val categories = Selectables fromFile (selectablesPath, positions)
+                val outPath = PATH + selectablesPath.split ('.') .head + ".out.csv"
+                implicit val writer: CSVWriter = CSVWriter.open (outPath)
+                val positions = Positions fromFile (PATH + positionsPath)
+                val categories = Selectables fromFile (PATH + selectablesPath, positions)
                 val budget = BigDecimal (budgetStr)
                 run (mcknapsack.Knapsack (categories, budget))
             case args => throw new MatchError (args)
