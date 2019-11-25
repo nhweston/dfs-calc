@@ -1,26 +1,20 @@
 package com.github.nhweston.mcknapsack
 
-import com.github.nhweston.mcknapsack.Category.{ElemCategory, MetaCategory}
-import com.github.nhweston.mcknapsack.Selectable.Combination
+import com.github.nhweston.mcknapsack.Selectable.{Combination, Element}
 import com.github.tototoshi.csv.CSVWriter
 
-sealed abstract class Category (val selectables: Seq[Selectable], val numToSelect: Int)
+sealed abstract class Category[S <: Selectable] (val selectables: Seq[S], val numToSelect: Int)
 (implicit val writer: CSVWriter) {
 
-    lazy val labels: Seq[String] = {
-        this match {
-            case ElemCategory (label, _, _) => Seq (label)
-            case MetaCategory (categories, _) => categories.map (_.label)
-        }
-    }
+    def labels: Seq[String]
 
-    lazy val sorted: Seq[Selectable] = selectables.sortBy (s => (s.cost, -s.value))
+    lazy val sorted: Seq[S] = selectables.sortBy (s => (s.cost, -s.value))
 
-    lazy val culled: Seq[Selectable] = {
-        val builder = Seq.newBuilder[Selectable]
+    lazy val culled: Seq[S] = {
+        val builder = Seq.newBuilder[S]
         var valuesMax = Seq.empty[BigDecimal]
         @inline
-        def insert (selectable: Selectable) : Unit = {
+        def insert (selectable: S) : Unit = {
             builder += selectable
             val idx = {
                 val idx = valuesMax.indexWhere (_ <= selectable.value)
@@ -54,17 +48,20 @@ object Category {
 
     case class ElemCategory (
         label: String,
-        override val selectables: Seq[Selectable],
+        override val selectables: Seq[Element],
         override val numToSelect: Int
     ) (override implicit val writer: CSVWriter)
-    extends Category (selectables, numToSelect) {
-        lazy val combinations: Seq[Seq[Selectable]] = (culled combinations numToSelect) .toSeq
+    extends Category[Element] (selectables, numToSelect) {
+        override lazy val labels: Seq[String] = Seq (label)
+        lazy val combinations: Seq[Seq[Element]] = (culled combinations numToSelect) .toSeq
     }
 
     case class MetaCategory (
         categories: Seq[ElemCategory],
         override val selectables: Seq[Combination]
     ) (override implicit val writer: CSVWriter)
-    extends Category (selectables, 1)
+    extends Category[Combination] (selectables, 1) {
+        override lazy val labels: Seq[String] = categories.flatMap (_.labels)
+    }
 
 }

@@ -13,14 +13,7 @@ case class Knapsack (
         categories.map { category =>
             MetaCategory (
                 Seq.fill (category.numToSelect) (category),
-                category.combinations.map { comb =>
-                    Combination (
-                        comb.flatMap {
-                            case elem: Element => Seq (elem)
-                            case Combination (elems) => elems
-                        }
-                    )
-                }
+                category.combinations.map (comb => Combination (comb.flatMap (s => Seq (s))))
             )
         }
     }
@@ -32,10 +25,7 @@ case class Knapsack (
         def aggregate (c1: MetaCategory, c2: MetaCategory) : MetaCategory = {
             MetaCategory (
                 c1.categories ++ c2.categories,
-                pairs (c1.culled, c2.culled) .map {
-                    case (Combination (s1), Combination (s2)) => Combination (s1 ++ s2)
-                    case x => throw new MatchError (x)
-                }
+                pairs (c1.culled, c2.culled) .map {case (Combination (s1), Combination (s2)) => Combination (s1 ++ s2)}
             )
         }
         def aux (categories: Seq[MetaCategory]) : MetaCategory = {
@@ -47,16 +37,13 @@ case class Knapsack (
                     aggregate (aux (s1), aux (s2))
             }
         }
-        aux (metaZero) .culled.map {
-            case comb: Combination => comb
-            case x => throw new MatchError (x)
-        }
+        aux (metaZero) .culled
     }
 
     lazy val result: Map[String, Seq[Element]] = {
         selections.filter (_.cost <= budget) .maxByOption (_.value) match {
             case Some (Combination (elems)) => elems.groupBy (_.category)
-            case x => throw new MatchError (x)
+            case None => Map.empty
         }
     }
 
